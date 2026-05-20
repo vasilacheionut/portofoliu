@@ -2,7 +2,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 
-// Îi spunem componentei Vue că va primi o listă numită "proiecte" de la Laravel
 defineProps({
     proiecte: Array,
 });
@@ -26,26 +25,48 @@ defineProps({
                     <div
                         v-for="proiect in proiecte"
                         :key="proiect.id"
-                        class="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
+                        class="flex flex-col overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
                     >
-                        <h3
-                            class="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2"
-                        >
-                            {{ proiect.titlu }}
-                        </h3>
+                        <img
+                            :src="proiect.imagine"
+                            :alt="proiect.titlu"
+                            class="h-48 w-full object-cover"
+                        />
 
-                        <p class="text-gray-600 dark:text-gray-300 mb-4">
-                            {{ proiect.descriere }}
-                        </p>
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3
+                                    class="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2"
+                                >
+                                    {{ proiect.titlu }}
+                                </h3>
 
-                        <div class="flex flex-wrap gap-2">
-                            <span
-                                v-for="tech in proiect.tehnologii"
-                                :key="tech"
-                                class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                            >
-                                {{ tech }}
-                            </span>
+                                <p
+                                    class="text-gray-600 dark:text-gray-300 mb-4"
+                                >
+                                    {{ proiect.descriere }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <div class="flex flex-wrap gap-2 mb-5">
+                                    <span
+                                        v-for="tech in proiect.tehnologii"
+                                        :key="tech"
+                                        class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                                    >
+                                        {{ tech }}
+                                    </span>
+                                </div>
+
+                                <a
+                                    :href="proiect.link_github"
+                                    target="_blank"
+                                    class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition duration-150 ease-in-out shadow-sm"
+                                >
+                                    Vezi Codul pe GitHub
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
