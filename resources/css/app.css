@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Corecție pentru câmpurile completate automat (Autofill) în Dark Mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    /* Schimbă textul în alb/gri deschis */
+    -webkit-text-fill-color: #f3f4f6 !important;
+
+    /* Înlocuiește fundalul galben cu griul închis al inputurilor din Tailwind (bg-gray-900) */
+    -webkit-box-shadow: 0 0 0px 1000px #111827 inset !important;
+
+    /* Blochează browserul din a schimba culoarea înapoi */
+    transition: background-color 5000s ease-in-out 0s;
+}
