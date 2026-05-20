@@ -24,9 +24,12 @@ Route::get('/dashboard', function () {
         ->unique()
         ->filter(); // Elimină eventualele valori goale
 
+    // MODIFICARE: Trimitem și mesajele din MySQL în interfața Dashboard
     return inertia('Dashboard', [
         'totalProiecte' => Project::count(),
-        'totalTehnologii' => $tehnologiiUnice->count(), // Trimitem numărul final către frontend
+        'totalTehnologii' => $tehnologiiUnice->count(),
+        'mesaje' => Message::latest()->get(), // Adus din MySQL (cele mai noi primele)
+        'mesajeNecitite' => Message::where('citit', false)->count(), // Numărător mesaje noi
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -94,5 +97,17 @@ Route::post('/contact', function (Request $request) {
     // 3. Trimitem utilizatorul înapoi cu un mesaj de succes
     return back()->with('succes', 'Mesajul tău a fost trimis cu succes!');
 })->name('contact.trimite');
+
+// Rută pentru marcarea mesajului ca citit
+Route::patch('/mesaje/{message}/citit', function (Message $message) {
+    $message->update(['citit' => true]);
+    return back();
+})->middleware(['auth', 'verified'])->name('mesaje.citit');
+
+// Rută pentru ștergerea definitivă a unui mesaj
+Route::delete('/mesaje/{message}', function (Message $message) {
+    $message->delete();
+    return back();
+})->middleware(['auth', 'verified'])->name('mesaje.destroy');
 
 require __DIR__ . '/auth.php';
