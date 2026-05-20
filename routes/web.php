@@ -17,7 +17,9 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return inertia('Dashboard', [
+        'totalProiecte' => Project::count(), // Numără câte rânduri avem în tabela projects
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/proiecte', function () {
