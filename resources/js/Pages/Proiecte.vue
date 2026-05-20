@@ -7,29 +7,66 @@ defineProps({
     proiecte: Array,
 });
 
-// Inițializăm formularul Inertia cu câmpurile goale
+// variabilă reactivă care ne spune dacă suntem în mod Editare sau Adăugare
+const esteEditare = ref(false);
+const idProiectEditat = ref(null);
+
 const form = useForm({
     titlu: "",
     descriere: "",
-    tehnologiiString: "", // Îl folosim pentru a scrie tehnologiile cu virgulă (ex: Laravel, Vue)
+    tehnologiiString: "",
     imagine: "",
     link_github: "",
 });
 
-// Trimitem formularul către Laravel
-const adaugaProiect = () => {
-    // Transformăm șirul de text cu virgule într-un array curat de JavaScript
+// Pornește modul de editare și încarcă datele în formular corect
+const incarcaPentruEditare = (proiect) => {
+    esteEditare.value = true;
+    idProiectEditat.value = proiect.id; // ✅ Linia corectată simplu
+
+    form.titlu = proiect.titlu;
+    form.descriere = proiect.descriere;
+    form.tehnologiiString = proiect.tehnologii.join(", ");
+    form.imagine = proiect.imagine || "";
+    form.link_github = proiect.link_github || "";
+
+    // Salt lin (scroll) în susul paginii la formular
+    window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+// Resetează complet formularul la starea inițială (Adăugare)
+const anuleazaEditare = () => {
+    esteEditare.value = false;
+    idProiectEditat.value = null;
+    form.reset();
+};
+
+// Execută salvarea sau actualizarea în funcție de starea curentă
+const trimiteFormular = () => {
     const taguriArray = form.tehnologiiString
         .split(",")
         .map((tech) => tech.trim())
         .filter((tech) => tech !== "");
 
-    form.transform((data) => ({
-        ...data,
-        tehnologii: taguriArray, // Trimitem array-ul final în loc de string
-    })).post("/proiecte", {
-        onSuccess: () => form.reset(), // Resetează formularul dacă salvarea a reușit
-    });
+    if (esteEditare.value) {
+        // Dacă suntem în mod editare, trimitem PUT către ruta de update
+        form.transform((data) => ({
+            ...data,
+            tehnologii: taguriArray,
+        })).put(`/proiecte/${idProiectEditat.value}`, {
+            onSuccess: () => {
+                anuleazaEditare();
+            },
+        });
+    } else {
+        // Dacă suntem în mod adăugare, trimitem POST normal
+        form.transform((data) => ({
+            ...data,
+            tehnologii: taguriArray,
+        })).post("/proiecte", {
+            onSuccess: () => form.reset(),
+        });
+    }
 };
 
 const stergeProiect = (id, titlu) => {
@@ -59,11 +96,15 @@ const stergeProiect = (id, titlu) => {
                     <h3
                         class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4"
                     >
-                        Adaugă un Proiect Nou
+                        {{
+                            esteEditare
+                                ? `Editează Proiectul: ${form.titlu}`
+                                : "Adaugă un Proiect Nou"
+                        }}
                     </h3>
 
                     <form
-                        @submit.prevent="adaugaProiect"
+                        @submit.prevent="trimiteFormular"
                         class="grid grid-cols-1 gap-4 md:grid-cols-2"
                     >
                         <div>
@@ -75,7 +116,7 @@ const stergeProiect = (id, titlu) => {
                                 v-model="form.titlu"
                                 type="text"
                                 required
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             />
                         </div>
 
@@ -89,7 +130,7 @@ const stergeProiect = (id, titlu) => {
                                 type="text"
                                 required
                                 placeholder="Laravel, Vue, Tailwind"
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             />
                         </div>
 
@@ -102,7 +143,7 @@ const stergeProiect = (id, titlu) => {
                                 v-model="form.descriere"
                                 required
                                 rows="3"
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             ></textarea>
                         </div>
 
@@ -114,8 +155,7 @@ const stergeProiect = (id, titlu) => {
                             <input
                                 v-model="form.imagine"
                                 type="url"
-                                placeholder="https://images.unsplash.com/..."
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             />
                         </div>
 
@@ -127,20 +167,33 @@ const stergeProiect = (id, titlu) => {
                             <input
                                 v-model="form.link_github"
                                 type="url"
-                                placeholder="https://github.com/..."
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             />
                         </div>
 
-                        <div class="md:col-span-2 flex justify-end">
+                        <div class="md:col-span-2 flex justify-end gap-3">
+                            <button
+                                v-if="esteEditare"
+                                @click="anuleazaEditare"
+                                type="button"
+                                class="px-5 py-2 text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition shadow-sm"
+                            >
+                                Anulează
+                            </button>
+
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="px-5 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md transition disabled:opacity-50 shadow-sm"
+                                :class="
+                                    esteEditare
+                                        ? 'bg-amber-600 hover:bg-amber-700'
+                                        : 'bg-green-600 hover:bg-green-700'
+                                "
+                                class="px-5 py-2 text-sm font-medium text-white rounded-md transition disabled:opacity-50 shadow-sm"
                             >
                                 {{
-                                    form.processing
-                                        ? "Se salvează..."
+                                    esteEditare
+                                        ? "Actualizează Proiectul"
                                         : "Salvează Proiectul"
                                 }}
                             </button>
@@ -154,26 +207,51 @@ const stergeProiect = (id, titlu) => {
                         :key="proiect.id"
                         class="flex flex-col relative overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
                     >
-                        <button
-                            @click="stergeProiect(proiect.id, proiect.titlu)"
-                            class="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-md transition z-10"
-                            title="Șterge Proiect"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
+                        <div class="absolute top-3 right-3 flex gap-2 z-10">
+                            <button
+                                @click="incarcaPentruEditare(proiect)"
+                                class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-md transition"
+                                title="Editează Proiect"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-16v1a3 3 0 003 3h10M4 7h16"
-                                />
-                            </svg>
-                        </button>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-4 w-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                    />
+                                </svg>
+                            </button>
+
+                            <button
+                                @click="
+                                    stergeProiect(proiect.id, proiect.titlu)
+                                "
+                                class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-md transition"
+                                title="Șterge Proiect"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-4 w-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-16v1a3 3 0 003 3h10M4 7h16"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
 
                         <img
                             v-if="proiect.imagine"

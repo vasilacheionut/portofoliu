@@ -47,6 +47,22 @@ Route::post('/proiecte', function (Request $request) {
     return back(); // Împrospătează lista din pagină automat
 })->middleware(['auth', 'verified'])->name('proiecte.store');
 
+Route::put('/proiecte/{project}', function (Request $request, Project $project) {
+    // Validăm noile date trimise
+    $dateValidate = $request->validate([
+        'titlu' => 'required|string|max:255',
+        'descriere' => 'required|string',
+        'tehnologii' => 'required|array',
+        'imagine' => 'nullable|url',
+        'link_github' => 'nullable|url',
+    ]);
+
+    // Actualizăm proiectul în baza de date
+    $project->update($dateValidate);
+
+    return back();
+})->middleware(['auth', 'verified'])->name('proiecte.update');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
