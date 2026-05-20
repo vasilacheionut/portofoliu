@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Project;
 use Illuminate\Http\Request;
-
+use App\Models\Message;
 
 Route::get('/', function () {
     return inertia('PortofoliuPublic', [
@@ -78,5 +78,21 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::post('/contact', function (Request $request) {
+    // 1. Validăm datele din formular (securitate)
+    $dateValidate = $request->validate([
+        'nume' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'subiect' => 'nullable|string|max:255',
+        'continut' => 'required|string|min:10',
+    ]);
+
+    // 2. Salvăm mesajul în baza de date
+    Message::create($dateValidate);
+
+    // 3. Trimitem utilizatorul înapoi cu un mesaj de succes
+    return back()->with('succes', 'Mesajul tău a fost trimis cu succes!');
+})->name('contact.trimite');
 
 require __DIR__ . '/auth.php';

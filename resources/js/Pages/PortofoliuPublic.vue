@@ -1,10 +1,27 @@
 <script setup>
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 
 defineProps({
     proiecte: Array,
-    canLogin: Boolean,
 });
+
+// Configuram formularul de contact cu Inertia
+const form = useForm({
+    nume: "",
+    email: "",
+    subiect: "",
+    continut: "",
+});
+
+// Funcția care trimite mesajul către backend
+const trimiteMesajul = () => {
+    form.post(route("contact.trimite"), {
+        onSuccess: () => {
+            form.reset(); // Curăță formularul dacă s-a trimis cu succes
+            alert("Mesajul a fost trimis cu succes! Îți mulțumesc.");
+        },
+    });
+};
 </script>
 
 <template>
@@ -35,7 +52,7 @@ defineProps({
                             :href="route('dashboard')"
                             class="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
                         >
-                            Mergi la Panou Administrative
+                            Mergi la Panoul Administrativ
                         </Link>
                         <Link
                             v-else
@@ -97,7 +114,6 @@ defineProps({
                             :alt="proiect.titlu"
                             class="h-48 w-full object-cover"
                         />
-
                         <div class="p-6 flex-1 flex flex-col justify-between">
                             <div>
                                 <h3
@@ -111,7 +127,6 @@ defineProps({
                                     {{ proiect.descriere }}
                                 </p>
                             </div>
-
                             <div>
                                 <div class="flex flex-wrap gap-1.5 mb-5">
                                     <span
@@ -122,7 +137,6 @@ defineProps({
                                         {{ tech }}
                                     </span>
                                 </div>
-
                                 <a
                                     v-if="proiect.link_github"
                                     :href="proiect.link_github"
@@ -134,6 +148,106 @@ defineProps({
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div
+                    class="mt-20 max-w-2xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700"
+                >
+                    <h2
+                        class="text-2xl font-bold mb-2 text-gray-900 dark:text-white"
+                    >
+                        Contactează-mă
+                    </h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                        Ai o întrebare sau vrei să colaborăm? Lasă-mi un mesaj
+                        mai jos!
+                    </p>
+
+                    <form @submit.prevent="trimiteMesajul" class="space-y-4">
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    >Numele tău</label
+                                >
+                                <input
+                                    v-model="form.nume"
+                                    type="text"
+                                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                />
+                                <span
+                                    v-if="form.errors.nume"
+                                    class="text-xs text-red-500 mt-1 block"
+                                    >{{ form.errors.nume }}</span
+                                >
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    >Adresă de Email</label
+                                >
+                                <input
+                                    v-model="form.email"
+                                    type="email"
+                                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                />
+                                <span
+                                    v-if="form.errors.email"
+                                    class="text-xs text-red-500 mt-1 block"
+                                    >{{ form.errors.email }}</span
+                                >
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Subiect</label
+                            >
+                            <input
+                                v-model="form.subiect"
+                                type="text"
+                                class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            />
+                            <span
+                                v-if="form.errors.subiect"
+                                class="text-xs text-red-500 mt-1 block"
+                                >{{ form.errors.subiect }}</span
+                            >
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Mesaj</label
+                            >
+                            <textarea
+                                v-model="form.continut"
+                                rows="4"
+                                placeholder="Scrie mesajul tău aici (minim 10 caractere)..."
+                                class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            ></textarea>
+                            <span
+                                v-if="form.errors.continut"
+                                class="text-xs text-red-500 mt-1 block"
+                                >{{ form.errors.continut }}</span
+                            >
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button
+                                type="submit"
+                                :disabled="form.processing"
+                                class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-md transition shadow-sm disabled:opacity-50"
+                            >
+                                {{
+                                    form.processing
+                                        ? "Se trimite..."
+                                        : "Trimite Mesaj"
+                                }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>
