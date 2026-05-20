@@ -115,9 +115,13 @@ const stergeProiect = (id, titlu) => {
                             <input
                                 v-model="form.titlu"
                                 type="text"
-                                required
                                 class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             />
+                            <span
+                                v-if="form.errors.titlu"
+                                class="text-xs text-red-500 mt-1 block"
+                                >{{ form.errors.titlu }}</span
+                            >
                         </div>
 
                         <div>
@@ -128,10 +132,14 @@ const stergeProiect = (id, titlu) => {
                             <input
                                 v-model="form.tehnologiiString"
                                 type="text"
-                                required
                                 placeholder="Laravel, Vue, Tailwind"
                                 class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             />
+                            <span
+                                v-if="form.errors.tehnologii"
+                                class="text-xs text-red-500 mt-1 block"
+                                >{{ form.errors.tehnologii }}</span
+                            >
                         </div>
 
                         <div class="md:col-span-2">
@@ -141,10 +149,14 @@ const stergeProiect = (id, titlu) => {
                             >
                             <textarea
                                 v-model="form.descriere"
-                                required
                                 rows="3"
                                 class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             ></textarea>
+                            <span
+                                v-if="form.errors.descriere"
+                                class="text-xs text-red-500 mt-1 block"
+                                >{{ form.errors.descriere }}</span
+                            >
                         </div>
 
                         <div>
@@ -154,9 +166,15 @@ const stergeProiect = (id, titlu) => {
                             >
                             <input
                                 v-model="form.imagine"
-                                type="url"
+                                type="text"
+                                placeholder="https://..."
                                 class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             />
+                            <span
+                                v-if="form.errors.imagine"
+                                class="text-xs text-red-500 mt-1 block"
+                                >{{ form.errors.imagine }}</span
+                            >
                         </div>
 
                         <div>
@@ -166,9 +184,15 @@ const stergeProiect = (id, titlu) => {
                             >
                             <input
                                 v-model="form.link_github"
-                                type="url"
+                                type="text"
+                                placeholder="https://..."
                                 class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
                             />
+                            <span
+                                v-if="form.errors.link_github"
+                                class="text-xs text-red-500 mt-1 block"
+                                >{{ form.errors.link_github }}</span
+                            >
                         </div>
 
                         <div class="md:col-span-2 flex justify-end gap-3">
@@ -192,8 +216,8 @@ const stergeProiect = (id, titlu) => {
                                 class="px-5 py-2 text-sm font-medium text-white rounded-md transition disabled:opacity-50 shadow-sm"
                             >
                                 {{
-                                    esteEditare
-                                        ? "Actualizează Proiectul"
+                                    form.processing
+                                        ? "Se salvează..."
                                         : "Salvează Proiectul"
                                 }}
                             </button>
