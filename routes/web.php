@@ -17,8 +17,18 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
+    // 1. Extragere toate tehnologiile din proiecte (rezultă o colecție de array-uri)
+    $toateTehnologiile = Project::pluck('tehnologii');
+
+    // 2. Procesare: le unim pe toate într-o listă unică, eliminăm duplicatele și curățăm spațiile
+    $tehnologiiUnice = $toateTehnologiile->flatten()
+        ->map(fn($tech) => trim($tech))
+        ->unique()
+        ->filter(); // Elimină eventualele valori goale
+
     return inertia('Dashboard', [
-        'totalProiecte' => Project::count(), // Numără câte rânduri avem în tabela projects
+        'totalProiecte' => Project::count(),
+        'totalTehnologii' => $tehnologiiUnice->count(), // Trimitem numărul final către frontend
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 

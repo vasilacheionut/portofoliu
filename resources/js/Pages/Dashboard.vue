@@ -2,9 +2,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 
-// Prindem variabila trimisă din Laravel
+// Prindem ambele variabile trimise din Laravel
 defineProps({
     totalProiecte: Number,
+    totalTehnologii: Number,
 });
 </script>
 
@@ -75,7 +76,42 @@ defineProps({
                     </div>
 
                     <div
-                        class="p-6 bg-white shadow-sm sm:rounded-lg dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex flex-col justify-between"
+                        class="p-6 bg-white shadow-sm sm:rounded-lg dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-between"
+                    >
+                        <div>
+                            <p
+                                class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                                Tehnologii Unice
+                            </p>
+                            <h4
+                                class="mt-2 text-3xl font-extrabold text-emerald-600 dark:text-emerald-400"
+                            >
+                                {{ totalTehnologii }}
+                            </h4>
+                        </div>
+                        <div
+                            class="p-3 bg-emerald-100 dark:bg-emerald-900/50 rounded-full text-emerald-600 dark:text-emerald-400"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                                />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div
+                        class="p-6 bg-white shadow-sm sm:rounded-lg dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex flex-col justify-between sm:col-span-2 lg:col-span-1"
                     >
                         <div>
                             <p
