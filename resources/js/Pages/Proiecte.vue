@@ -22,7 +22,7 @@ const form = useForm({
 // Pornește modul de editare și încarcă datele în formular corect
 const incarcaPentruEditare = (proiect) => {
     esteEditare.value = true;
-    idProiectEditat.value = proiect.id; // ✅ Linia corectată simplu
+    idProiectEditat.value = proiect.id;
 
     form.titlu = proiect.titlu;
     form.descriere = proiect.descriere;
@@ -41,7 +41,7 @@ const anuleazaEditare = () => {
     form.reset();
 };
 
-// Execută salvarea sau actualizarea în funcție de starea curentă
+// Executat salvarea sau actualizarea în funcție de starea curentă
 const trimiteFormular = () => {
     const taguriArray = form.tehnologiiString
         .split(",")
@@ -49,7 +49,6 @@ const trimiteFormular = () => {
         .filter((tech) => tech !== "");
 
     if (esteEditare.value) {
-        // Dacă suntem în mod editare, trimitem PUT către ruta de update
         form.transform((data) => ({
             ...data,
             tehnologii: taguriArray,
@@ -59,7 +58,6 @@ const trimiteFormular = () => {
             },
         });
     } else {
-        // Dacă suntem în mod adăugare, trimitem POST normal
         form.transform((data) => ({
             ...data,
             tehnologii: taguriArray,
@@ -109,13 +107,13 @@ const stergeProiect = (id, titlu) => {
                     >
                         <div>
                             <label
-                                class="block text-sm font-medium text-gray-300"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                 >Titlu Proiect</label
                             >
                             <input
                                 v-model="form.titlu"
                                 type="text"
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500"
                             />
                             <span
                                 v-if="form.errors.titlu"
@@ -126,14 +124,14 @@ const stergeProiect = (id, titlu) => {
 
                         <div>
                             <label
-                                class="block text-sm font-medium text-gray-300"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                 >Tehnologii (separate prin virgulă)</label
                             >
                             <input
                                 v-model="form.tehnologiiString"
                                 type="text"
                                 placeholder="Laravel, Vue, Tailwind"
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500"
                             />
                             <span
                                 v-if="form.errors.tehnologii"
@@ -144,13 +142,13 @@ const stergeProiect = (id, titlu) => {
 
                         <div class="md:col-span-2">
                             <label
-                                class="block text-sm font-medium text-gray-300"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                 >Descriere</label
                             >
                             <textarea
                                 v-model="form.descriere"
                                 rows="3"
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500"
                             ></textarea>
                             <span
                                 v-if="form.errors.descriere"
@@ -161,14 +159,14 @@ const stergeProiect = (id, titlu) => {
 
                         <div>
                             <label
-                                class="block text-sm font-medium text-gray-300"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                 >Link URL Imagine</label
                             >
                             <input
                                 v-model="form.imagine"
                                 type="text"
                                 placeholder="https://..."
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500"
                             />
                             <span
                                 v-if="form.errors.imagine"
@@ -179,14 +177,14 @@ const stergeProiect = (id, titlu) => {
 
                         <div>
                             <label
-                                class="block text-sm font-medium text-gray-300"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                 >Link GitHub</label
                             >
                             <input
                                 v-model="form.link_github"
                                 type="text"
                                 placeholder="https://..."
-                                class="mt-1 block w-full rounded-md border-gray-700 bg-gray-900 text-gray-100 shadow-sm focus:border-blue-500"
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500"
                             />
                             <span
                                 v-if="form.errors.link_github"
@@ -200,7 +198,7 @@ const stergeProiect = (id, titlu) => {
                                 v-if="esteEditare"
                                 @click="anuleazaEditare"
                                 type="button"
-                                class="px-5 py-2 text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition shadow-sm"
+                                class="px-5 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition shadow-sm"
                             >
                                 Anulează
                             </button>
@@ -281,7 +279,7 @@ const stergeProiect = (id, titlu) => {
                             v-if="proiect.imagine"
                             :src="proiect.imagine"
                             :alt="proiect.titlu"
-                            class="h-48 w-full object-cover"
+                            class="h-48 w-full block object-cover"
                         />
 
                         <div class="p-6 flex-1 flex flex-col justify-between">

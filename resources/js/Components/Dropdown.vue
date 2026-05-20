@@ -1,43 +1,45 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from "vue";
 
 const props = defineProps({
     align: {
         type: String,
-        default: 'right',
+        default: "right",
     },
     width: {
         type: String,
-        default: '48',
+        default: "48",
     },
+    // REPARAT: Am adăugat clasele adaptive pentru modul întunecat direct pe proprietatea implicită
     contentClasses: {
         type: String,
-        default: 'py-1 bg-white',
+        default:
+            "py-1 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300",
     },
 });
 
 const closeOnEscape = (e) => {
-    if (open.value && e.key === 'Escape') {
+    if (open.value && e.key === "Escape") {
         open.value = false;
     }
 };
 
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
-onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
+onMounted(() => document.addEventListener("keydown", closeOnEscape));
+onUnmounted(() => document.removeEventListener("keydown", closeOnEscape));
 
 const widthClass = computed(() => {
     return {
-        48: 'w-48',
+        48: "w-48",
     }[props.width.toString()];
 });
 
 const alignmentClasses = computed(() => {
-    if (props.align === 'left') {
-        return 'ltr:origin-top-left rtl:origin-top-right start-0';
-    } else if (props.align === 'right') {
-        return 'ltr:origin-top-right rtl:origin-top-left end-0';
+    if (props.align === "left") {
+        return "ltr:origin-top-left rtl:origin-top-right start-0";
+    } else if (props.align === "right") {
+        return "ltr:origin-top-right rtl:origin-top-left end-0";
     } else {
-        return 'origin-top';
+        return "origin-top";
     }
 });
 
@@ -50,7 +52,6 @@ const open = ref(false);
             <slot name="trigger" />
         </div>
 
-        <!-- Full Screen Dropdown Overlay -->
         <div
             v-show="open"
             class="fixed inset-0 z-40"
@@ -73,7 +74,7 @@ const open = ref(false);
                 @click="open = false"
             >
                 <div
-                    class="rounded-md ring-1 ring-black ring-opacity-5"
+                    class="rounded-md ring-1 ring-black ring-opacity-5 dark:ring-gray-700 border dark:border-gray-700"
                     :class="contentClasses"
                 >
                     <slot name="content" />
