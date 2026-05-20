@@ -7,14 +7,12 @@ use Inertia\Inertia;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
+
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+    return inertia('PortofoliuPublic', [
+        'proiecte' => Project::all(),
     ]);
-});
+})->name('portofoliu.public');
 
 Route::get('/dashboard', function () {
     // 1. Extragere toate tehnologiile din proiecte (rezultă o colecție de array-uri)
